@@ -6,8 +6,6 @@ env:
 on:
   push:
     branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
 jobs:
   supabase-functions:
     name: Deploy Supabase functions
@@ -25,14 +23,7 @@ jobs:
           version: latest
 
       - run: supabase functions deploy --project-ref $PROJECT_ID
-  supabase-database:
-    name: Run database migrations
-    runs-on: ubuntu-latest
-    environment: dev
-    steps:
-      - uses: actions/checkout@v2
-      - name: Install Vercel CLI
-        run: npm install --global vercel@latest
+
   vercel:
     name: Deploy frontend to Vercel
     runs-on: ubuntu-latest
