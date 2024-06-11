@@ -40,8 +40,8 @@ jobs:
       - uses: supabase/setup-cli@v1
         with:
           version: latest
-
-      - run: supabase migration up --project-ref $PROJECT_ID
+      - run: supabase link --project-ref $PROJECT_ID
+      - run: supabase db push
 
   vercel:
     name: Deploy frontend to Vercel
