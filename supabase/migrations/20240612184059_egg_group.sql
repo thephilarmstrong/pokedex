@@ -1,8 +1,6 @@
 create table "public"."egg_group" (
     "id" uuid not null default gen_random_uuid(),
-    "name" text not null,
-    "date_created" timestamp with time zone not null default now(),
-    "date_modified" timestamp with time zone not null default now()
+    "name" text not null
 );
 
 
