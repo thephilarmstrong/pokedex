@@ -19,8 +19,9 @@ Deno.serve(async (req) => {
   );
 
   console.log('calling pokeapi')
-  const initialResponse =await fetch('https://pokeapi.co/api/v2/egg-group');
-  console.log(initialResponse.body)
+  const initialResponse = await fetch('https://pokeapi.co/api/v2/egg-group');
+  const body = initialResponse.json()
+  console.log(body)
   // Go to base url
   // Iterate over `results` field
     // Call `url` field
@@ -29,7 +30,7 @@ Deno.serve(async (req) => {
 
   return new Response(
 
-    JSON.stringify(initialResponse.body),
+    JSON.stringify(body),
     { headers: { "Content-Type": "application/json" } },
   )
 })
