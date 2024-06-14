@@ -20,7 +20,7 @@ Deno.serve(async (req) => {
 
   console.log('calling pokeapi')
   const initialResponse = await fetch('https://pokeapi.co/api/v2/egg-group');
-  const body = initialResponse.json()
+  const body = await initialResponse.json()
   console.log(body)
   // Go to base url
   // Iterate over `results` field
