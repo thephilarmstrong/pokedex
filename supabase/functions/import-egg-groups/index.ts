@@ -18,7 +18,9 @@ Deno.serve(async (req) => {
     { global: { headers: { Authorization: req.headers.get('Authorization')! }, } }
   );
 
+  console.log('calling pokeapi')
   const initialResponse =await fetch('https://pokeapi.co/api/v2/egg-group');
+  console.log(initialResponse.body)
   // Go to base url
   // Iterate over `results` field
     // Call `url` field
@@ -26,7 +28,7 @@ Deno.serve(async (req) => {
     // 
 
   return new Response(
-    JSON.stringify(initialResponse),
+    JSON.stringify(initialResponse.body),
     { headers: { "Content-Type": "application/json" } },
   )
 })
