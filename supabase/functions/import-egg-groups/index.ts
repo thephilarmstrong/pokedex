@@ -41,9 +41,11 @@ Deno.serve(async (req) => {
 
       console.log(eggGroup);
 
-      console.log(supabaseClient.from('egg_group')
-      .upsert(eggGroup)
-      .select());
+      const { data, error } = supabaseClient.from('egg_group')
+        .upsert(eggGroup);
+
+      console.log(data);
+      console.log(error);
 
       console.log('updated egg group ' + eggGroup.name);
       updateCount++;
