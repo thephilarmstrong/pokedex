@@ -35,15 +35,15 @@ Deno.serve(async (req) => {
     const response: Pagination = await loadData<Pagination>(fetchUrl);
 
     response.results.forEach(async result => {
-      console.log('Calling url for ' + result.name);
+      console.log(`Calling ${result.url} for ${result.name}`);
 
       const eggGroup = await loadData<EggGroup>(result.url);
 
       console.log(eggGroup);
 
-      supabaseClient.from('egg_group')
+      console.log(supabaseClient.from('egg_group')
       .upsert(eggGroup)
-      .select();
+      .select());
 
       console.log('updated egg group ' + eggGroup.name);
       updateCount++;
