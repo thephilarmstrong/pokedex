@@ -2,47 +2,33 @@
 // https://deno.land/manual/getting_started/setup_your_environment
 // This enables autocomplete, go to definition, etc.
 
+import { EggGroup } from "../_shared/pokeapi/types/egg-group.ts";
+import { importData } from "../_shared/pokeapi/utils/import-data.ts";
+
 // Setup type definitions for built-in Supabase Runtime APIs
 /// <reference types="https://esm.sh/@supabase/functions-js/src/edge-runtime.d.ts" />
 
-// import { Database, Tables } from "../../types/pokeapi.ts";
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+Deno.serve(async (_) => {
+  
+  const { error, count } = await importData('https://pokeapi.co/api/v2/egg-group', 'egg_group', mappingFunction);
 
-
-console.log("Hello from Functions!")
-
-Deno.serve(async (req) => {
-  const supabaseClient = createClient(
-    Deno.env.get('SUPABASE_URL') ?? '',
-    Deno.env.get('SUPABASE_ANON_KEY') ?? '',
-    { global: { headers: { Authorization: req.headers.get('Authorization')! }, } }
-  );
-
-  console.log('calling pokeapi')
-  const initialResponse = await fetch('https://pokeapi.co/api/v2/egg-group');
-  const body = await initialResponse.json()
-  console.log(body)
-  // Go to base url
-  // Iterate over `results` field
-    // Call `url` field
-    // Parse response and map to object
-    // 
+  if (error) {
+    console.log(`Error code: ${error.code}`);
+    console.log(`Error details: ${error.details}`);
+    console.log(`Error hint: ${error.hint}`);
+    console.log(`Error message: ${error.message}`);
+    return new Response(
+      JSON.stringify({message: `Error loading data, code: ${error.code}`}),
+      { headers: { "Content-Type": "application/json" },
+      status: 500,
+    },
+    )
+  }
 
   return new Response(
-
-    JSON.stringify(body),
+    JSON.stringify({message: `Updated ${count} egg groups`}),
     { headers: { "Content-Type": "application/json" } },
   )
-})
+});
 
-/* To invoke locally:
-
-  1. Run `supabase start` (see: https://supabase.com/docs/reference/cli/supabase-start)
-  2. Make an HTTP request:
-
-  curl -i --location --request POST 'http://127.0.0.1:54321/functions/v1/import-egg-groups' \
-    --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0' \
-    --header 'Content-Type: application/json' \
-    --data '{"name":"Functions"}'
-
-*/
+const mappingFunction = (input: EggGroup) => ({ id: input.id, name: input.name,});
