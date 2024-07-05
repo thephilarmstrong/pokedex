@@ -37,12 +37,15 @@ Deno.serve(async (req) => {
     response.results.forEach(async result => {
       console.log(`Calling ${result.url} for ${result.name}`);
 
-      const eggGroup = await loadData<EggGroup>(result.url);
+      const rawEggGroup = await loadData<EggGroup>(result.url);
+
+      const eggGroup: EggGroup = { id: rawEggGroup.id, name: rawEggGroup.name }
 
       console.log(eggGroup);
 
       const { data, error } = supabaseClient.from('egg_group')
-        .upsert(eggGroup);
+        .upsert(eggGroup)
+        .select();
 
       console.log(data);
       console.log(error);
