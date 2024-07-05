@@ -30,32 +30,25 @@ Deno.serve(async (req) => {
   while (fetchUrl) {
     const response: Pagination = await loadData<Pagination>(fetchUrl);
 
-    response.results.forEach(async result => {
-      console.log(`Calling ${result.url} for ${result.name}`);
+    Promise.all(response.results
+      .map(result => result.url)
+      .map(url => loadData<EggGroup>(url)))
+      .then(async (pokeapiResponse: EggGroup[]) => {
+        const itemsToUpdate = pokeapiResponse.map(rawObject => ({ id: rawObject.id, name: rawObject.name }));
 
-      const rawEggGroup = await loadData<EggGroup>(result.url);
-
-      const eggGroup: EggGroup = { id: rawEggGroup.id, name: rawEggGroup.name }
-
-      console.log(eggGroup);
-
-      const { data, error } = await supabaseClient.from('egg_group')
-        .insert(eggGroup)
+        const { data, error } = await supabaseClient.from('egg_group')
+        .insert(itemsToUpdate)
         .select();
 
-      console.log(data);
-      console.log(error);
+        console.log(data);
+        console.log(error);
+      });
 
-      console.log('updated egg group ' + eggGroup.name);
-      updateCount++;
-    });
-
-    fetchUrl = response.next;
+      fetchUrl = response.next;
   }
 
   return new Response(
-
-    JSON.stringify({message: `Updated ${updateCount} egg groups`}),
+    JSON.stringify({message: `Updated egg groups`}),
     { headers: { "Content-Type": "application/json" } },
   )
 });
