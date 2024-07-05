@@ -37,8 +37,7 @@ Deno.serve(async (req) => {
         const itemsToUpdate = pokeapiResponse.map(rawObject => ({ id: rawObject.id, name: rawObject.name }));
 
         const { data, error } = await supabaseClient.from('egg_group')
-        .insert(itemsToUpdate)
-        .select();
+        .insert(itemsToUpdate);
 
         console.log(data);
         console.log(error);
