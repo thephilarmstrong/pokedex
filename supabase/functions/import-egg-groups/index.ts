@@ -11,9 +11,6 @@ import { Pagination } from '../_shared/pokeapi/types/pagination.ts';
 import { loadData } from '../_shared/utils/load-data.ts';
 import { EggGroup } from '../_shared/pokeapi/types/egg-group.ts';
 
-
-console.log("Hello from Functions!")
-
 Deno.serve(async (req) => {
   const supabaseClient = createClient(
     Deno.env.get('SUPABASE_URL') ?? '',
@@ -24,7 +21,6 @@ Deno.serve(async (req) => {
           Authorization: req.headers.get('Authorization')!
         },
       },
-      db: { schema: 'pokeapi' }
     }
   );
 
