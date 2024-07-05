@@ -14,4 +14,12 @@ alter table "public"."egg_group" add constraint "egg_group_pkey" PRIMARY KEY usi
 
 alter table "public"."egg_group" add constraint "egg_group_name_key" UNIQUE using index "egg_group_name_key";
 
+alter table "egg_group" enable row level security;
 
+create policy "allow authenicated users to select for egg_group" on egg_group for
+select
+  to authenticated using (true);
+
+create policy "allow anonymous to select for egg_group" on egg_group for
+select
+  to anon using (true);

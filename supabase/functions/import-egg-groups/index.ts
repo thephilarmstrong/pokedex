@@ -2,50 +2,33 @@
 // https://deno.land/manual/getting_started/setup_your_environment
 // This enables autocomplete, go to definition, etc.
 
+import { EggGroup } from "../_shared/pokeapi/types/egg-group.ts";
+import { importData } from "../_shared/pokeapi/utils/import-data.ts";
+
 // Setup type definitions for built-in Supabase Runtime APIs
 /// <reference types="https://esm.sh/@supabase/functions-js/src/edge-runtime.d.ts" />
 
-// import { Database, Tables } from "../../types/pokeapi.ts";
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
-import { Pagination } from '../_shared/pokeapi/types/pagination.ts';
-import { loadData } from '../_shared/utils/load-data.ts';
-import { EggGroup } from '../_shared/pokeapi/types/egg-group.ts';
+Deno.serve(async (_) => {
+  
+  const { error, count } = await importData('https://pokeapi.co/api/v2/egg-group', 'egg_group', mappingFunction);
 
-Deno.serve(async (req) => {
-  const supabaseClient = createClient(
-    Deno.env.get('SUPABASE_URL') ?? '',
-    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
-    {
-      global: {
-        headers: {
-          Authorization: req.headers.get('Authorization')!
-        },
-      },
-    }
-  );
-
-  let fetchUrl: string | undefined = 'https://pokeapi.co/api/v2/egg-group';
-  let updateCount = 0;
-
-  while (fetchUrl) {
-    const response: Pagination = await loadData<Pagination>(fetchUrl);
-
-    Promise.all(response.results
-      .map(result => result.url)
-      .map(url => loadData<EggGroup>(url)))
-      .then(async (eggGroup: EggGroup[]) => {
-        const { data, error } = await supabaseClient.from('egg_group')
-        .upsert(eggGroup);
-
-        console.log(data);
-        console.log(error);
-      });
-
-      fetchUrl = response.next;
+  if (error) {
+    console.log(`Error code: ${error.code}`);
+    console.log(`Error details: ${error.details}`);
+    console.log(`Error hint: ${error.hint}`);
+    console.log(`Error message: ${error.message}`);
+    return new Response(
+      JSON.stringify({message: `Error loading data, code: ${error.code}`}),
+      { headers: { "Content-Type": "application/json" },
+      status: 500,
+    },
+    )
   }
 
   return new Response(
-    JSON.stringify({message: `Updated egg groups`}),
+    JSON.stringify({message: `Updated ${count} egg groups`}),
     { headers: { "Content-Type": "application/json" } },
   )
 });
+
+const mappingFunction = (input: EggGroup) => ({ id: input.id, name: input.name,});

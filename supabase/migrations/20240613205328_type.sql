@@ -37,4 +37,22 @@ alter table "public"."type_relation" add constraint "public_type_relation_type2_
 
 alter table "public"."type_relation" validate constraint "public_type_relation_type2_fkey";
 
+alter table "type" enable row level security;
 
+create policy "allow authenicated users to select for type" on type for
+select
+  to authenticated using (true);
+
+create policy "allow anonymous to select for type" on type for
+select
+  to anon using (true);
+
+alter table "type_relation" enable row level security;
+
+create policy "allow authenicated users to select for type_relation" on type_relation for
+select
+  to authenticated using (true);
+
+create policy "allow anonymous to select for type_relation" on type_relation for
+select
+  to anon using (true);
