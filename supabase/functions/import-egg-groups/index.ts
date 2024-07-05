@@ -14,7 +14,7 @@ import { EggGroup } from '../_shared/pokeapi/types/egg-group.ts';
 Deno.serve(async (req) => {
   const supabaseClient = createClient(
     Deno.env.get('SUPABASE_URL') ?? '',
-    Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
     {
       global: {
         headers: {
@@ -33,11 +33,9 @@ Deno.serve(async (req) => {
     Promise.all(response.results
       .map(result => result.url)
       .map(url => loadData<EggGroup>(url)))
-      .then(async (pokeapiResponse: EggGroup[]) => {
-        const itemsToUpdate = pokeapiResponse.map(rawObject => ({ id: rawObject.id, name: rawObject.name }));
-
+      .then(async (eggGroup: EggGroup[]) => {
         const { data, error } = await supabaseClient.from('egg_group')
-        .upsert(itemsToUpdate);
+        .upsert(eggGroup);
 
         console.log(data);
         console.log(error);
