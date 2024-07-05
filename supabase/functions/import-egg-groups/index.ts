@@ -44,7 +44,7 @@ Deno.serve(async (req) => {
       console.log(eggGroup);
 
       const { data, error } = await supabaseClient.from('egg_group')
-        .upsert(eggGroup)
+        .insert(eggGroup)
         .select();
 
       console.log(data);
