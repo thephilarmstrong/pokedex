@@ -12,7 +12,7 @@ export const importData = async <T>(
     const rowsToUpsert: T[] = [];
 
     while (fetchUrl) {
-        console.log(`Fetching paginated data`);
+        console.log(`Fetching paginated data from ${fetchUrl}`);
 
         const response: Pagination = await loadData<Pagination>(fetchUrl);
 
@@ -25,6 +25,8 @@ export const importData = async <T>(
                 items
                 .map(item => mappingFunction(item))
                 .forEach(item => rowsToUpsert.push(item));
+
+                console.log(items);
             });
     
         console.log(`Updating fetchUrl to ${response.next}`);
